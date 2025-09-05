@@ -452,7 +452,7 @@
     <div class="container">
         <div class="welcome-section">
             <div>
-                <h1>Welcome Nemat! 👋</h1>
+                <h1>Welcome Nemant! 👋</h1>
                 <p id="currentDate">Loading...</p>
             </div>
             <div class="refresh-controls">
