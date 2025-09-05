@@ -1,0 +1,142 @@
+
+// Include the main TCPDF library.
+require_once('plugins/tcpdf/tcpdf.php');
+
+// Extend the TCPDF class to create custom Header and Footer.
+class MYPDF extends TCPDF {
+
+    // Page header
+    public function Header() {
+        // Set font
+        $this->SetFont('helvetica', 'B', 20);
+        // Title
+        $this->Cell(0, 15, 'Traffic Dashboard System Report', 0, false, 'C', 0, '', 0, false, 'M', 'M');
+        $this->Ln(10); // Line break
+    }
+
+    // Page footer
+    public function Footer() {
+        // Position at 15 mm from bottom
+        $this->SetY(-15);
+        // Set font
+        $this->SetFont('helvetica', 'I', 8);
+        // Page number
+        $this->Cell(0, 10, 'Page '.$this->getAliasNumPage().'/'.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+    }
+}
+
+// Create new PDF document.
+$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+// Set document information.
+$pdf->SetCreator('Your Name');
+$pdf->SetAuthor('Your Name');
+$pdf->SetTitle('Traffic Dashboard - Project Report');
+$pdf->SetSubject('A detailed report on the Traffic Dashboard project for Viva Voce.');
+
+// Set default header data.
+$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
+
+// Set header and footer fonts.
+$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+// Set default monospaced font.
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+// Set margins.
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+// Set auto page breaks.
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+// Set image scale factor.
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+// Add a page.
+$pdf->AddPage();
+
+// --- CONTENT START ---
+
+// Use WriteHTML to easily format text.
+$pdf->SetFont('helvetica', '', 12);
+
+$html = '
+<h1>Project Overview</h1>
+<p>The <b>Traffic Dashboard System</b> is a web-based application designed to monitor, analyze, and report real-time traffic conditions. It provides administrators with a centralized platform to view traffic data on an interactive map, analyze trends using charts, and manage traffic alerts. This report details the project\'s features, technical architecture, and functionality.</p>
+
+<h2>Key Features</h2>
+<ul>
+    <li><b>Admin Authentication:</b> Secure login system for authorized personnel.</li>
+    <li><b>Interactive Dashboard:</b> Displays key performance indicators (KPIs) and data visualizations like traffic volume over time.</li>
+    <li><b>Live Traffic Map:</b> Utilizes Leaflet.js to show traffic hotspots with custom markers.</li>
+    <li><b>Data Management:</b> Admins can add, view, and filter traffic data entries.</li>
+    <li><b>Automated Alerts:</b> Sends email notifications when traffic levels exceed a predefined threshold.</li>
+    <li><b>Reporting:</b> Allows exporting data to both CSV and PDF formats for documentation and analysis.</li>
+</ul>
+
+<h2>Technology Stack</h2>
+<p>The application is built using the following technologies:</p>
+<ul>
+    <li><b>Front-End:</b> HTML, CSS, JavaScript, Bootstrap 5</li>
+    <li><b>Back-End:</b> PHP</li>
+    <li><b>Database:</b> MySQL</li>
+    <li><b>Libraries:</b>
+        <ul>
+            <li><b>Chart.js:</b> For data visualization charts.</li>
+            <li><b>Leaflet.js:</b> For the interactive map.</li>
+            <li><b>TCPDF:</b> For generating PDF reports.</li>
+        </ul>
+    </li>
+</ul>
+';
+
+$pdf->writeHTML($html, true, false, true, false, '');
+
+// --- SCREENSHOTS SECTION ---
+
+$pdf->AddPage(); // Add a new page for screenshots
+
+$html_screenshots = '<h1>Application Screenshots</h1>';
+$pdf->writeHTML($html_screenshots, true, false, true, false, '');
+
+// Dashboard Screenshot
+$pdf->SetFont('helvetica', 'B', 14);
+$pdf->Cell(0, 10, '1. Main Dashboard View', 0, 1);
+$pdf->Image('assets/images/dashboard.png', 15, '', 180, 0, 'PNG', '', 'T', false, 300, '', false, false, 1, false, false, false);
+$pdf->Ln(5); // Add a little space
+
+// Map Screenshot
+$pdf->SetFont('helvetica', 'B', 14);
+$pdf->Cell(0, 10, '2. Interactive Traffic Map', 0, 1);
+$pdf->Image('assets/images/map.png', 15, '', 180, 0, 'PNG', '', 'T', false, 300, '', false, false, 1, false, false, false);
+$pdf->Ln(5);
+
+// Reports Screenshot
+$pdf->SetFont('helvetica', 'B', 14);
+$pdf->Cell(0, 10, '3. Data Table and Reporting', 0, 1);
+$pdf->Image('assets/images/reports.png', 15, '', 180, 0, 'PNG', '', 'T', false, 300, '', false, false, 1, false, false, false);
+$pdf->Ln(5);
+
+
+// --- CONCLUSION ---
+
+$pdf->AddPage();
+$html_conclusion = '
+<h1>Conclusion</h1>
+<p>This project successfully demonstrates a comprehensive system for traffic management. By integrating mapping, data visualization, and automated alerts, it provides a powerful tool for administrators. The modular file structure ensures that the application is maintainable and scalable for future enhancements.</p>
+';
+$pdf->writeHTML($html_conclusion, true, false, true, false, '');
+
+
+// --- CONTENT END ---
+
+// Close and output the PDF document.
+// 'F' saves the file to the local server. The first argument is the filename.
+$pdf->Output(_DIR_ . '/README.pdf', 'F');
+
+echo 'README.pdf has been generated successfully!';
+
+?>

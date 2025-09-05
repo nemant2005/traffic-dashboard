@@ -1,0 +1,26 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background: #f4f4f4;
+}
+h2, h1 {
+    color: #333;
+}
+input, select, textarea, button {
+    margin: 8px 0;
+    padding: 8px;
+    width: 100%;
+}
+.success {
+    color: green;
+}
+.error {
+    color: red;
+}
+.login-container {
+    max-width: 300px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px #ccc;
+}
