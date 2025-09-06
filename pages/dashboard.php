@@ -13,7 +13,11 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+.chart-container {
+    position: relative;
+    height: 300px;   /* fixed height */
+    width: 100%;     /* responsive width */
+}
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -541,7 +545,9 @@
         <div class="chart-section">
             <div class="chart-card">
                 <div class="chart-title">Traffic Severity Overview - Last 7 Days</div>
-                <canvas id="severityChart" height="120"></canvas>
+                <div class="chart-container" style="height:300px;">
+        <canvas id="severityChart"></canvas>
+    </div>
             </div>
 
             <div class="chart-card">
@@ -555,22 +561,27 @@
             </div>
         </div>
 
-        <div class="bottom-grid">
-            <div class="chart-card">
-                <div class="chart-title">Latest Projects</div>
-                <div id="projectsList" style="display: flex; flex-direction: column; gap: 15px;">
-                    <div style="text-align: center; padding: 20px; color: #64748b;">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        Loading projects...
-                    </div>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-title">Monthly Trend</div>
-                <canvas id="trendChart" height="200"></canvas>
+       <div class="bottom-grid">
+    <div class="chart-card">
+        <div class="chart-title">Latest Projects</div>
+        <div id="projectsList" style="display: flex; flex-direction: column; gap: 15px;">
+            <div style="text-align: center; padding: 20px; color: #64748b;">
+                <i class="fas fa-spinner fa-spin"></i>
+                Loading projects...
             </div>
         </div>
+    </div>
+
+    <div class="chart-card">
+        <div class="chart-title">Monthly Trend</div>
+        
+        <!-- ✅ Wrapper with fixed height -->
+        <div class="chart-container" style="height:300px;">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+</div>
+
     </div>
 
     <script>
@@ -612,7 +623,7 @@
 
             errorMessage.style.display = 'none';
             try {
-                const response = await fetch('api/dashboard-data.php');
+                const response = await fetch('../api/dashboard-data.php');
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -685,54 +696,55 @@
         }
 
         function updateSeverityChart(data) {
-            const ctx = document.getElementById('severityChart').getContext('2d');
-            
-            if (severityChart) {
-                severityChart.destroy();
-            }
+    const ctx = document.getElementById('severityChart').getContext('2d');
+    
+    if (severityChart) {
+        severityChart.destroy();
+    }
 
-            severityChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: data.labels.length > 0 ? data.labels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    datasets: data.datasets.map(dataset => ({
-                        ...dataset,
-                        borderRadius: 8,
-                        borderSkipped: false,
-                    }))
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1000,
-                        easing: 'easeInOutQuart'
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            },
-                            beginAtZero: true
-                        }
+    severityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.labels.length > 0 ? data.labels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: data.datasets.map(dataset => ({
+                ...dataset,
+                borderRadius: 8,
+                borderSkipped: false,
+            }))
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,  // ✅ height wrapper follow karega
+            animation: {
+                duration: 1000,
+                easing: 'easeInOutQuart'
+            },
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
                     }
                 }
-            });
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    },
+                    beginAtZero: true
+                }
+            }
         }
+    });
+}
+
 
         function updateTrendChart(data) {
             const trendCtx = document.getElementById('trendChart').getContext('2d');
@@ -942,6 +954,7 @@
             stopAutoRefresh();
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </body>
 </html>
